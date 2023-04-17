@@ -1,4 +1,7 @@
 package com.example.studytoby2;
+
+import org.springframework.stereotype.Service;
+
 /**
  * SimpleHelloService.java
  * Class 설명을 작성하세요.
@@ -6,9 +9,10 @@ package com.example.studytoby2;
  * @author danusys
  * @since 2023.04.14
  */
-public class SimpleHelloService {
+@Service
+public class SimpleHelloService implements HelloService {
 
-    String sayHello(String name) {
-        return "Heelo " + name;
+    public String sayHello(String name) {
+        return "Hello " + name;
     }
 }
