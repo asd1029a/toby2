@@ -1,13 +1,11 @@
 package com.example.config.autoconfig;
 
+import com.example.config.ConditionalMyOnClass;
 import com.example.config.MyAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Condition;
-import org.springframework.context.annotation.ConditionContext;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
  * TomcatWebServerConfig.java
@@ -17,18 +15,17 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  * @since 2023.04.17
  */
 @MyAutoConfiguration
-@Conditional(TomcatWebServerConfig.TomcatCondition.class)
+@ConditionalMyOnClass("org.apache.catalina.startup.Tomcat")
+@EnableMyConfigurationProperties(ServerProperties.class)
 public class TomcatWebServerConfig {
+
     @Bean("tomcatWebServerFactory")
-    public ServletWebServerFactory serverFactory() {
-        return new TomcatServletWebServerFactory();
+    @ConditionalOnMissingBean
+    public ServletWebServerFactory serverFactory(ServerProperties properties) {
+        TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
+        factory.setContextPath(properties.getContextPath());
+        factory.setPort(properties.getPort());
+        return factory;
     }
 
-    static class TomcatCondition implements Condition {
-
-        @Override
-        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-            return true;
-        }
-    }
 }
